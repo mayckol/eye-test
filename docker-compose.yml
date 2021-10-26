@@ -1,0 +1,61 @@
+version: '3.8'
+networks:
+  node_api:
+
+services:
+  frontend:
+    container_name: eyemobile_frontend
+    stdin_open: true
+    build: ./frontend-restaurant
+    command: yarn start
+    ports:
+      - 9000:3000
+    volumes:
+      - './frontend-restaurant/:/app'
+      - '/app/node_modules'
+    networks:
+      - node_api
+  mock:
+    container_name: eyemobile_mock
+    build: ./api-mock-restaurant
+    command: yarn dev
+    ports:
+      - '3003:3003'
+    volumes:
+      - ./api-mock-restaurant:/usr/app
+      - '/usr/app/node_modules'
+    networks:
+      - node_api
+  # api:
+  #   container_name: eyemobile_api
+  #   build: ./api
+  #   command: yarn dev
+  #   ports:
+  #     - '3001:2000'
+  #   volumes:
+  #     - ./api:/usr/app
+  #     - '/usr/app/node_modules'
+  #   networks:
+  #     - node_api
+      
+  # mysql:
+  #   container_name: eyemobile_db
+  #   image: mysql
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   restart: always
+  #   ports:
+  #     - '3310:3306'
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: root
+  #   volumes:
+  #     - dbdata:/var/lib/mysql
+  #   networks:
+  #     - node_api
+
+networks:
+  node_api:
+    driver: bridge
+    
+volumes:
+  dbdata:
+    driver: local
